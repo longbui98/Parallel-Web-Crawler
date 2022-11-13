@@ -64,6 +64,6 @@ public final class CrawlResultWriter {
     
     objectMapper.disable(Feature.AUTO_CLOSE_TARGET);
 
-    objectMapper.writeValue(writer, CrawlResultWriter.class);
+    objectMapper.writeValue(writer, result);
   }
 }
