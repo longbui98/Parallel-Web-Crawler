@@ -52,7 +52,7 @@ final class ProfilingMethodInterceptor implements InvocationHandler {
 		try {
 			result = method.invoke(delegate, args);
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			throw e.getTargetException();
 		} finally {
 			if (checkAnnotation.isPresent()) {
 				Instant end = clock.instant();
