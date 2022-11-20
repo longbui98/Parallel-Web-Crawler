@@ -6,10 +6,8 @@ import java.lang.reflect.Method;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.ZonedDateTime;
 import java.util.Objects;
-
-import com.google.common.base.Optional;
+import java.util.Optional;
 
 /**
  * A method interceptor that checks whether {@link Method}s are annotated with
@@ -32,8 +30,7 @@ final class ProfilingMethodInterceptor implements InvocationHandler {
 	}
 
 	@Override
-	public Object invoke(Object proxy, Method method, Object[] args) throws InvocationTargetException,
-			NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException {
+	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		// TODO: This method interceptor should inspect the called method to see if it
 		// is a profiled
 		// method. For profiled methods, the interceptor should record the start time,
@@ -44,24 +41,27 @@ final class ProfilingMethodInterceptor implements InvocationHandler {
 		// the
 		// ProfilingState methods.
 		Object result = null;
-		var checkAnnotation = Optional.of(method.getAnnotation(Profiled.class));
-		if (checkAnnotation.isPresent()) {
-			Instant start = clock.instant();
-			try {
-				result = method.invoke(delegate, args);
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
-			}finally {
-				if(checkAnnotation.isPresent()) {
-					Instant end = Instant.now();
-					Duration duration = Duration.between(start, end);
-					
-					profilingState.record(delegate.getClass(), method, duration);
-					
-					return result;
-				}
+		Instant start = null;
+		
+		Optional<Boolean> checkAnnotation = method.getAnnotation(Profiled.class) != null ?
+				Optional.of(true) : Optional.empty();
+		if(checkAnnotation.isPresent()) {
+			start = clock.instant();
+		}
+		
+		try {
+			result = method.invoke(delegate, args);
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		} finally {
+			if (checkAnnotation.isPresent()) {
+				Instant end = clock.instant();
+				Duration duration = Duration.between(start, end);
+
+				profilingState.record(delegate.getClass(), method, duration);
 			}
 		}
-		return null;
+
+		return result;
 	}
 }
