@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.Objects;
 
 import com.fasterxml.jackson.core.JsonGenerator.Feature;
@@ -33,20 +34,19 @@ public final class CrawlResultWriter {
    * @param path the file path where the crawl result data should be written.
  * @throws IOException 
    */
-  public void write(Path path) throws IOException {
-    // This is here to get rid of the unused variable warning.
-    Objects.requireNonNull(path);
-    // TODO: Fill in this method.
-    if(Files.deleteIfExists(path)) {
-    	Files.createDirectory(path);
-    }
-    try(Writer writer = Files.newBufferedWriter(path)){
-    	write(writer);
-    	writer.close();
-    }catch(IOException e) {
-    	e.printStackTrace();
-    }
-  }
+	public void write(Path path) throws IOException {
+		// This is here to get rid of the unused variable warning.
+		Objects.requireNonNull(path);
+		// TODO: Fill in this method.
+		if (Files.deleteIfExists(path)) {
+			Files.createDirectory(path);
+		}
+		try (Writer writer = Files.newBufferedWriter(path, StandardOpenOption.CREATE)) {
+			write(writer);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
   /**
    * Formats the {@link CrawlResult} as JSON and writes it to the given {@link Writer}.
@@ -64,6 +64,6 @@ public final class CrawlResultWriter {
     
     objectMapper.disable(Feature.AUTO_CLOSE_TARGET);
 
-    objectMapper.writeValue(writer, result);
+    objectMapper.writerWithDefaultPrettyPrinter().writeValue(writer, this.result);
   }
 }
