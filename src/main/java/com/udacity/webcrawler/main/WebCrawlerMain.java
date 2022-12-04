@@ -52,15 +52,19 @@ public final class WebCrawlerMain {
     	}
     }
     // TODO: Write the profile data to a text file (or System.out if the file name is empty)
-    String resultPathFile = config.getProfileOutputPath();
-    if(!resultPathFile.isEmpty()) {
-    	Path path = Paths.get(resultPathFile);
-    	profiler.writeData(path);;
-    }else {
-    	Writer writer = new OutputStreamWriter(System.out);
-    	profiler.writeData(writer);
-    	writer.flush();
-    }
+	String resultPathFile = config.getProfileOutputPath();
+	if (!resultPathFile.isEmpty()) {
+		Path path = Paths.get(resultPathFile);
+		profiler.writeData(path);
+		;
+	} else {
+		try (Writer writer = new OutputStreamWriter(System.out)) {
+			profiler.writeData(writer);
+			writer.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
   }
 
   public static void main(String[] args) throws Exception {

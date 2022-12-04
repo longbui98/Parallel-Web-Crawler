@@ -94,8 +94,7 @@ final class ParallelWebCrawler implements WebCrawler {
 				if(pattern.matcher(url).matches()) return false;
 			}
 			
-			if(visitedUrls.contains(url)) return false;
-			visitedUrls.add(url);
+			if(!visitedUrls.add(url)) return false;
 			
 			PageParser.Result result = parserFactory.get(url).parse();
 			

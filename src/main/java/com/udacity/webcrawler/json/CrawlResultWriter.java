@@ -38,9 +38,6 @@ public final class CrawlResultWriter {
 		// This is here to get rid of the unused variable warning.
 		Objects.requireNonNull(path);
 		// TODO: Fill in this method.
-		if (Files.deleteIfExists(path)) {
-			Files.createDirectory(path);
-		}
 		try (Writer writer = Files.newBufferedWriter(path, StandardOpenOption.CREATE)) {
 			write(writer);
 		} catch (IOException e) {
@@ -57,7 +54,7 @@ public final class CrawlResultWriter {
  * @throws StreamWriteException 
    */
   public void write(Writer writer) throws StreamWriteException, DatabindException, IOException {
-    // This is here to get rid of the unused variable warning.
+    // This is here to get rid of the unused variable warning.ConcurrentSkipListSet 
     Objects.requireNonNull(writer);
     // TODO: Fill in this method.
     ObjectMapper objectMapper = new ObjectMapper();

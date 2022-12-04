@@ -10,6 +10,7 @@ import java.lang.reflect.Proxy;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.time.Clock;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -68,10 +69,9 @@ final class ProfilerImpl implements Profiler {
 		// TODO: Write the ProfilingState data to the given file path. If a file already
 		// exists at that
 		// path, the new data should be appended to the existing file.
-		try (Writer writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
+		try (Writer writer = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
 			writeData(writer);
 			writer.flush();
-			writer.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
