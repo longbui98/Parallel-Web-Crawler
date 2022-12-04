@@ -19,7 +19,6 @@ final class ProfilingMethodInterceptor implements InvocationHandler {
 	private final Clock clock;
 	private final Object delegate;
 	private final ProfilingState profilingState;
-	
 
 	// TODO: You will need to add more instance fields and constructor arguments to
 	// this class.
@@ -42,20 +41,20 @@ final class ProfilingMethodInterceptor implements InvocationHandler {
 		// ProfilingState methods.
 		Object result = null;
 		Instant start = null;
-		
-		Optional<Boolean> checkAnnotation = method.getAnnotation(Profiled.class) != null ?
-				Optional.of(true) : Optional.empty();
-		if(checkAnnotation.isPresent()) {
+
+		Optional<Boolean> checkAnnotation = method.getAnnotation(Profiled.class) != null ? Optional.of(true)
+				: Optional.empty();
+		if (checkAnnotation.isPresent()) {
 			start = clock.instant();
 		}
-		
+
 		try {
 			result = method.invoke(delegate, args);
 		} catch (InvocationTargetException e) {
 			throw e.getTargetException();
-		} catch(IllegalAccessException e){
-			throw new IllegalAccessException() ;
-		}finally {
+		} catch (IllegalAccessException e) {
+			throw new RuntimeException(e);
+		} finally {
 			if (checkAnnotation.isPresent()) {
 				Instant end = clock.instant();
 				Duration duration = Duration.between(start, end);
